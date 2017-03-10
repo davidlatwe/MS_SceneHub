@@ -6,8 +6,9 @@ Created on 2016.06.18
 '''
 
 from pymel.core import *
-import mMaya.mSceneInfo as mSceneInfo; reload(mSceneInfo)
-import mMaya.mGeneral as mGeneral; reload(mGeneral)
+from .. import mMaya; reload(mMaya)
+from ..mMaya import mSceneInfo; reload(mSceneInfo)
+from ..mMaya import mGeneral; reload(mGeneral)
 import logging
 import os
 

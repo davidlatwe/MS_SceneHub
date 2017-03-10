@@ -6,13 +6,12 @@ Created on 2016.04.28
 '''
 import maya.cmds as cmds
 import maya.mel as mel
-import os
+import os, sys
 import functools
-import logging
-
-logging.basicConfig(level=logging.WARNING)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from .. import mLogger; reload(mLogger)
+exc = os.path.basename(sys.executable)
+logger = mLogger.MLog('moGC.mMaya.outline',
+					False if exc == 'mayapy.exe' else True)
 
 
 
@@ -24,16 +23,16 @@ def _useSelection(func):
 		logger.debug('arg, kwarg: ' + str(arg) + str(kwarg))
 		result = []
 		if not arg:
-			logger.debug(u'未指定物件，使用選取清單。')
+			logger.debug('No designation, use selection.')
 			nodes = cmds.ls(sl= 1, l= 1)
 			if nodes:
 				for node in nodes:
 					if func(node):
 						result.extend(func(node))
 			else:
-				cmds.warning(u'未選取或指定任何物件。')
+				logger.warning('No designation, and no selection.')
 		else:
-			logger.debug(u'有指定物件，直接執行。')
+			logger.debug('Have designation, execute.')
 			if func(arg):
 				result.extend(func(arg))
 
@@ -45,7 +44,8 @@ def _useSelection(func):
 def findRoot(nodeType= None):
 	"""
 	找出所有已選取物件在 outliner 裡各自的根物件。
-	@param nodeType: [list, string] 根物件型別。要找多種型別可用 list ，只找單型別可用 string 。
+	@param nodeType: [list, string] 根物件型別。要找多種型別可用 list，
+					只找單型別可用 string 。
 	"""
 	if nodeType is None:
 		nodeType = []
@@ -54,10 +54,11 @@ def findRoot(nodeType= None):
 	if seleList:
 		for obj in seleList:
 			root = obj.split('|')[1]
-			if root not in rootNodes and (cmds.objectType(root) in nodeType or nodeType == []):
-				rootNodes.append(root)
+			if root not in rootNodes:
+				if cmds.objectType(root) in nodeType or nodeType == []:
+					rootNodes.append(root)
 	else:
-		cmds.warning(u'未選取或指定任何物件。')
+		logger.warning('No designation, and no selection.')
 
 	return rootNodes
 
@@ -78,7 +79,9 @@ def findHidden(node= None):
 
 def findType(nodeType, excludeType= None, node= None):
 	"""
-	列出選取物件或指定物件底下的特定型別子物件，或者列出選取物件或指定物件底下特定型別之外的子物件
+	列出選取物件或指定物件底下的特定型別子物件，
+	或者，
+	列出選取物件或指定物件底下特定型別之外的子物件
 	@param nodeType: [string] 物件型別
 	@param excludeType: [bool] include or exclude 預設為 False
 	@param node: [string] 物件名稱

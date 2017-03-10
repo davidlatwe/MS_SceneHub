@@ -4,17 +4,17 @@ Created on 2016.05.10
 
 @author: davidpower
 '''
-import os
+import os, sys
 import maya.cmds as cmds
 import maya.mel as mel
-import logging
-import mMaya.mGeneral as mGeneral; reload(mGeneral)
-
-logger = logging.getLogger('MayaOil.moSceneInfo')
+import mGeneral; reload(mGeneral)
+from .. import mLogger; reload(mLogger)
+exc = os.path.basename(sys.executable)
+logger = mLogger.MLog('moGC.mMaya.sInfo',
+					False if exc == 'mayapy.exe' else True)
 
 
 class SceneInfo(object):
-
 	def __init__(self):
 
 		''' os '''
@@ -50,8 +50,6 @@ class SceneInfo(object):
 		self.fps = mel.eval('currentTimeUnitToFPS')
 		self.timeUnit = cmds.currentUnit(q= 1, t= 1)
 
-
-
 	def getDirRules(self):
 		"""
 		"""
@@ -60,7 +58,6 @@ class SceneInfo(object):
 			ruleDict[rule] = cmds.workspace(rule, q= 1, fre= 1)
 
 		return ruleDict
-
 
 	def getVerSN(self, filename):
 
@@ -73,7 +70,6 @@ class SceneInfo(object):
 
 			#logger.error('Invaild version number. filename: %s' % filename)
 			return ''
-
 
 	def getShotNum(self, filename):
 
@@ -92,7 +88,6 @@ class SceneInfo(object):
 				#logger.error('Invaild shot number.')
 				return ''
 
-
 	def pathSep(self):
 		"""
 		path separator 待跨平台測試
@@ -100,7 +95,6 @@ class SceneInfo(object):
 		sep = os.altsep
 		
 		return sep
-
 
 	def makeDir(self, filePath, isFile= None):
 		"""

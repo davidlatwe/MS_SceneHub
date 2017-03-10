@@ -6,13 +6,12 @@ Created on 2016.04.29
 '''
 import maya.cmds as cmds
 import maya.mel as mel
-import os
+import os, sys
 import functools
-import logging
-
-logging.basicConfig(level=logging.WARNING)
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from .. import mLogger; reload(mLogger)
+exc = os.path.basename(sys.executable)
+logger = mLogger.MLog('moGC.mMaya.general',
+					False if exc == 'mayapy.exe' else True)
 
 
 

@@ -17,9 +17,12 @@ import logging
 import ctypes
 import json
 import os
-import moCache.moGeoCache as moGeoCache; reload(moGeoCache)
-import mMaya.mSceneInfo as mSceneInfo; reload(mSceneInfo)
-import moCam.moCam as moCam; reload(moCam)
+from .. import moCache; reload(moCache)
+from ..moCache import moGeoCache as moGeoCache; reload(moGeoCache)
+from .. import mMaya; reload(mMaya)
+from ..mMaya import mSceneInfo as mSceneInfo; reload(mSceneInfo)
+from .. import moCam; reload(moCam)
+from ..moCam import moCam as moCam; reload(moCam)
 
 logger = logging.getLogger('MayaOil.moHub.UI')
 
@@ -339,6 +342,7 @@ def submitANI(*args):
 			if shotNum:
 				updateJSON('ANI', shotNum, assetList)
 			else:
+				logger.warning('ShotNum : ' + shotNum)
 				logger.warning('[ANI] submit faild.')
 
 
@@ -837,7 +841,7 @@ def mkShotListBtn(windowName, shotColumn):
 	for shot in shotList:
 		
 		# shot info extract
-		shotNum = shot[:shotPadding]
+		shotNum = shot#[:shotPadding]
 		s_fps = gcLog['shots'][shot]['INF']['fps']
 		s_fps = str(int(s_fps) if s_fps.is_integer()  else s_fps)
 		s_min = str(int(gcLog['shots'][shot]['INF']['min']))
@@ -864,7 +868,7 @@ def mkShotListBtn(windowName, shotColumn):
 
 		# huge shot index
 		titleName = text(l= shotNum, al= 'right')
-		dp_makePySideUI(titleName, 'QObject {font: bold 100px Arial; color: #' + '252525' + ';}')
+		dp_makePySideUI(titleName, 'QObject {font: bold 40px Arial; color: #' + '252525' + ';}')
 		# huge fps
 		frameRate = formLayout()
 		fpsText = text(l= s_fps, al= 'right')
@@ -1120,7 +1124,7 @@ def mkShotListBtn(windowName, shotColumn):
 		button(ecAssetBtn, e= 1, c= partial(ecAssetBtn_do, ecAssetBtn, shotFrameName_asset_Dict))
 
 
-		formLayout(formName, e= 1, af=[(titleName, 'left', -20), (titleName, 'top', -25)])
+		formLayout(formName, e= 1, af=[(titleName, 'left', -1), (titleName, 'top', -1)])
 		formLayout(formName, e= 1, af=[(frameRate, 'left',   4), (frameRate, 'top',  74)])
 		formLayout(formName, e= 1, af=[(frameRang, 'left',  10), (frameRang, 'top',  92)])
 		formLayout(formName, e= 1, af=[(columName, 'right',  0), (columName, 'top', 0), (columName, 'left', 120)])
